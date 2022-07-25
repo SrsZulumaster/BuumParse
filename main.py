@@ -1,3 +1,4 @@
+import datetime
 import time
 import pyautogui
 from datetime import timedelta, date
@@ -17,15 +18,18 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Users\szimmerman\AppData\Local\Prog
 
 
 # Use this function to strip all unnecessary symbols that pytesseract might pick up
+# Pytesseract is very specific about what symbols it picks up
 def get_value_without_symbols(value):
+    value = value.replace(' ', '')
     value = value.replace('¢', '')
+    value = value.replace('€', '')
     value = value.strip()
     return value
 
 
 # this clicks on the cell where the column and row intersect and returns the value
 def get_cell_value(column, row):
-    shot = pyautogui.screenshot(region=(column[0], row[1], column[2], row[3]))
+    shot = pyautogui.screenshot(region=(column[0]+2, row[1]+4, column[2]+4, row[3]+4))
     screen_value = pytesseract.image_to_string(shot)
     screen_value = get_value_without_symbols(screen_value)
     return screen_value
@@ -48,15 +52,17 @@ def get_yesterday_sales():
     pyautogui.press('down', presses=30)
     
     # this selects the second to last line
+
     pyautogui.press('up')
 
     # these lines find the correct column and line for the sales yesterday
     sum_km = pyautogui.locateOnScreen('sales.png')
     bills = pyautogui.locateOnScreen('arveid.png')
     arrow_final = pyautogui.locateOnScreen('arrow.png')
+    date_yesterday = get_date_yesterday(arrow_final)
     final_sales = get_cell_value(sum_km, arrow_final)
     final_bills = get_cell_value(bills, arrow_final)
-    final_values = [final_sales, final_bills]
+    final_values = [final_sales, final_bills, date_yesterday]
     return final_values
 
 
