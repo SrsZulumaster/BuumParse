@@ -1,11 +1,9 @@
-import datetime
 import time
 import pyautogui
-from datetime import timedelta, date
 import re
 import pytesseract
 from PIL import Image
-from pyperclip import paste
+
 
 '''
 Buum- a retail program built on Firebird 3.0 - restricted to only use client side application
@@ -29,8 +27,8 @@ def get_value_without_symbols(value):
 
 # this clicks on the cell where the column and row intersect and returns the value
 def get_cell_value(column, row):
-    shot = pyautogui.screenshot(region=(column[0]+2, row[1]+4, column[2]+4, row[3]+4))
-    screen_value = pytesseract.image_to_string(shot)
+    screen_shot = pyautogui.screenshot(region=(column[0]+2, row[1]+4, column[2]+4, row[3]+4))
+    screen_value = pytesseract.image_to_string(screen_shot)
     screen_value = get_value_without_symbols(screen_value)
     return screen_value
 
@@ -47,22 +45,19 @@ def get_yesterday_sales():
     time.sleep(5)
 
     # this block uses the line marker arrow and gets to the bottom of the table
-    arrow_start = pyautogui.locateOnScreen('arrow.png')
     pyautogui.click('arrow.png')
     pyautogui.press('down', presses=30)
     
-    # this selects the second to last line
-
+    # this selects the second to last line, temporary until I figure out file operations
     pyautogui.press('up')
 
     # these lines find the correct column and line for the sales yesterday
     sum_km = pyautogui.locateOnScreen('sales.png')
     bills = pyautogui.locateOnScreen('arveid.png')
-    arrow_final = pyautogui.locateOnScreen('arrow.png')
-    date_yesterday = get_date_yesterday(arrow_final)
+    arrow_final = pyautogui.locateOnScreen('arrow.png')  # this is the final location of the line pointer arrow
     final_sales = get_cell_value(sum_km, arrow_final)
     final_bills = get_cell_value(bills, arrow_final)
-    final_values = [final_sales, final_bills, date_yesterday]
+    final_values = [final_sales, final_bills]
     return final_values
 
 
