@@ -1,9 +1,6 @@
 import time
 import pyautogui
-import re
 import pytesseract
-from PIL import Image
-
 
 '''
 Buum- a retail program built on Firebird 3.0 - restricted to only use client side application
@@ -15,22 +12,13 @@ Future of the project might include web scraping to get info from Sensmax
 pytesseract.pytesseract.tesseract_cmd = r'C:\Users\szimmerman\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
 
 
-# Use this function to strip all unnecessary symbols that pytesseract might pick up
-# Pytesseract is very specific about what symbols it picks up
-def get_value_without_symbols(value):
-    value = value.replace(' ', '')
-    value = value.replace('¢', '')
-    value = value.replace('€', '')
-    value = value.strip()
-    return value
-
-
 # this clicks on the cell where the column and row intersect and returns the value
 def get_cell_value(column, row):
-    screen_shot = pyautogui.screenshot(region=(column[0]+4, row[1]+4, column[2]+4, row[3]+4))
-    screen_value = pytesseract.image_to_string(screen_shot)
+    custom_config = r'--psm 6  -c tessedit_char_whitelist=0123456789,.'
+    screen_shot = pyautogui.screenshot(region=(column[0], row[1], column[2], row[3]))
+    screen_value = pytesseract.image_to_string(screen_shot, config=custom_config)
+    screen_value = screen_value.strip()
     print(screen_value)
-    screen_value = get_value_without_symbols(screen_value)
     return screen_value
 
 
