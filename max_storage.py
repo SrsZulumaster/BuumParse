@@ -24,7 +24,7 @@ def send_max_items():
     Kaubamajakas = {}
     pyautogui.click("py_auto_pics/ladu.png")
     pyautogui.click("py_auto_pics/ladu.png")
-    time.sleep(2)
+    time.sleep(4)
     pyautogui.click("py_auto_pics/Kogus_laos.png")
     time.sleep(0.5)
     pyautogui.click("py_auto_pics/max_kogus.png")
@@ -63,23 +63,24 @@ def send_max_items():
 
 
 def get_send_info(size, EAN):
+    time.sleep(1)
     pyautogui.click("py_auto_pics/lao_info.png")
     pyautogui.locateOnScreen(size)
     print(pyautogui.locateOnScreen("py_auto_pics/artikkel-muutmine.png"))
     top_corner = pyautogui.locateOnScreen("py_auto_pics/artikkel-muutmine.png")
     bottom_corner = pyautogui.locateOnScreen("py_auto_pics/katkesta.png")
     left_top_coord = [top_corner[0], top_corner[1]]
-    right_bottom_coord = [top_corner[0], bottom_corner[1]]
-    region = (left_top_coord[0], left_top_coord[1], right_bottom_coord[0], right_bottom_coord[1])
+    width = bottom_corner[0] - top_corner[0]
+    height = bottom_corner[1] - top_corner[1]
+    region = (left_top_coord[0], left_top_coord[1], width, height)
     while True:
         line = pyautogui.locateOnScreen("py_auto_pics/arrow.png", region=region)
+        pyautogui.click(line)
         available_storage = pyautogui.locateOnScreen("py_auto_pics/kogus.png")
         maximum_allowed = pyautogui.locateOnScreen("py_auto_pics/maksimumkogus.png")
         available_num = get_cell_number(available_storage, line)
         max_allowed_num = get_cell_number(maximum_allowed, line)
-        if available_num != '' or max_allowed_num != '':
-            available_num = float(available_num.replace(',','.'))
-            max_allowed_num = float(max_allowed_num.replace(',', '.'))
+        if available_num != None and max_allowed_num not None:
             if available_num > max_allowed_num:
                 check_store = pyautogui.locateOnScreen("py_auto_pics/artikli_ladu.png")
                 send_amount = available_num - max_allowed_num
@@ -87,8 +88,9 @@ def get_send_info(size, EAN):
                 return_info = [EAN, send_amount, to_store]
                 return return_info
         else:
+            line = pyautogui.locateOnScreen("py_auto_pics/arrow.png", region=region)
+            # pyautogui.click(line)
             pyautogui.press('down')
-            continue
 
 
 send_max_items()
