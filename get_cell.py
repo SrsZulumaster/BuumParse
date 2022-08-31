@@ -32,6 +32,7 @@ def get_cell_string(column, row):
 def get_shot_string(screen_shot):
     custom_config = r'--psm 6'
     screen_value = pytesseract.image_to_string(screen_shot, config=custom_config)
+    screen_value = screen_value.replace('*','')
     screen_value = screen_value.strip()
     print(screen_value)
     return screen_value
